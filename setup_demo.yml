@@ -54,15 +54,8 @@
           - name: "SESSION_COOKIE_AGE"
             value: 180000
 
-    - name: "Add {{ demo }} configuration"
-      block:
-      - name: "Include configuration for {{ demo }}"
-        ansible.builtin.include_vars: "{{ demo }}/setup.yml"
-      rescue:
-        - fail:
-            msg: Maximum retries of grouped tasks reached
-          # initial try plus 3 retries = 4 total tries
-          when: retry_count | int == 3
+    - name: "Include configuration for {{ demo }}"
+      ansible.builtin.include_vars: "{{ demo }}/setup.yml"
 
     - name: Demo Components
       ansible.builtin.include_role:
