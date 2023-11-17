@@ -47,7 +47,7 @@ controller_templates:
   - name: Retry rescue block
     block:
     - name: Increment retry count
-      set_fact:
+      ansible.builtin.set_fact:
         retry_count: "{{ 0 if retry_count is undefined else retry_count | int + 1 }}"
 
     - name: "LINUX / Register with Insights"
