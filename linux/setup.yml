@@ -44,390 +44,367 @@ controller_inventory_sources:
     credential: Insights Inventory
 
 controller_templates:
-  - name: Retry rescue block
-    block:
-    - name: Increment retry count
-      ansible.builtin.set_fact:
-        retry_count: "{{ 0 if retry_count is undefined else retry_count | int + 1 }}"
+  - name: "LINUX / Register with Insights"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/ec2_register.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    extra_vars:
+      activation_key: !unsafe "RHEL{{ ansible_distribution_major_version }}_{{ env }}"
+      org_id: REPLACEME
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Choose Environment
+          type: multiplechoice
+          variable: env
+          choices:
+            - Dev
+            - QA
+            - Prod
+          required: true
+        - question_name: Ansible Inventory Group (and Insights tag) to be created
+          type: text
+          variable: insights_tag
+          required: true
+        - question_name: Org ID
+          type: text
+          variable: org_id
+          required: true
 
-    - name: "LINUX / Register with Insights"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/ec2_register.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      extra_vars:
-        activation_key: !unsafe "RHEL{{ ansible_distribution_major_version }}_{{ env }}"
-        org_id: REPLACEME
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Choose Environment
-            type: multiplechoice
-            variable: env
-            choices:
-              - Dev
-              - QA
-              - Prod
-            required: true
-          - question_name: Ansible Inventory Group (and Insights tag) to be created
-            type: text
-            variable: insights_tag
-            required: true
-          - question_name: Org ID
-            type: text
-            variable: org_id
-            required: true
+  - name: "LINUX / Troubleshoot"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/tshoot.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
 
-    - name: "LINUX / Troubleshoot"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/tshoot.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      use_fact_cache: true
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
+  - name: "LINUX / Temporary Sudo"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/temp_sudo.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: User Name
+          type: text
+          variable: sudo_user
+          required: true
+        - question_name: How long to grant access in minutes
+          type: integer
+          variable: sudo_time
+          default: 10
+          required: true
 
-    - name: "LINUX / Temporary Sudo"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/temp_sudo.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: User Name
-            type: text
-            variable: sudo_user
-            required: true
-          - question_name: How long to grant access in minutes
-            type: integer
-            variable: sudo_time
-            default: 10
-            required: true
+  - name: "LINUX / Patching"
+    job_type: check
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/patching.yml"
+    execution_environment: Default execution environment
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    ask_job_type_on_launch: true
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
 
-    - name: "LINUX / Patching"
-      job_type: check
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/patching.yml"
-      execution_environment: Default execution environment
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      use_fact_cache: true
-      ask_job_type_on_launch: true
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
+  - name: "LINUX / Start Service"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/service_start.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Service Name
+          type: text
+          variable: service_name
+          required: true
 
-    - name: "LINUX / Start Service"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/service_start.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      use_fact_cache: true
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Service Name
-            type: text
-            variable: service_name
-            required: true
+  - name: "LINUX / Stop Service"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/service_stop.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Service Name
+          type: text
+          variable: service_name
+          required: true
 
-    - name: "LINUX / Stop Service"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/service_stop.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      use_fact_cache: true
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Service Name
-            type: text
-            variable: service_name
-            required: true
+  - name: "LINUX / Run Shell Script"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/run_script.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Shell Script
+          type: textarea
+          variable: shell_script
+          required: true
 
-    - name: "LINUX / Run Shell Script"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/run_script.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Shell Script
-            type: textarea
-            variable: shell_script
-            required: true
+  - name: "LINUX / Fact Scan"
+    project: "Ansible official demo project"
+    playbook: linux/fact_scan.yml
+    inventory: Workshop Inventory
+    execution_environment: Default execution environment
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    credentials:
+      - Workshop Credential
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
 
-    - name: "LINUX / Fact Scan"
-      project: "Ansible official demo project"
-      playbook: linux/fact_scan.yml
-      inventory: Workshop Inventory
-      execution_environment: Default execution environment
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      use_fact_cache: true
-      credentials:
-        - Workshop Credential
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
+  - name: "LINUX / Podman Webserver"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/podman.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Web Page Message
+          type: textarea
+          variable: message
+          required: true
+          default: "This is Apache webserver running in a container with podman"
 
-    - name: "LINUX / Podman Webserver"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/podman.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Web Page Message
-            type: textarea
-            variable: message
-            required: true
-            default: "This is Apache webserver running in a container with podman"
+  - name: "LINUX / System Roles"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/system_roles.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    diff_mode: true
+    ask_job_type_on_launch: true
+    extra_vars:
+      system_roles:
+        - selinux
+      selinux_policy: targeted
+      selinux_state: enforcing
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
 
-    - name: "LINUX / System Roles"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/system_roles.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      diff_mode: true
-      ask_job_type_on_launch: true
-      extra_vars:
-        system_roles:
-          - selinux
-        selinux_policy: targeted
-        selinux_state: enforcing
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
+  - name: "LINUX / Install Web Console (cockpit)"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/system_roles.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    diff_mode: true
+    ask_job_type_on_launch: true
+    extra_vars:
+      system_roles:
+        - cockpit
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Cockpit package load
+          type: multiplechoice
+          variable: cockpit_packages
+          default: minimal
+          choices:
+            - default
+            - minimal
+            - full
+          required: true
 
-    - name: "LINUX / Install Web Console (cockpit)"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/system_roles.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      diff_mode: true
-      ask_job_type_on_launch: true
-      extra_vars:
-        system_roles:
-          - cockpit
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Cockpit package load
-            type: multiplechoice
-            variable: cockpit_packages
-            default: minimal
-            choices:
-              - default
-              - minimal
-              - full
-            required: true
+  - name: "LINUX / DISA STIG"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/compliance.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    credentials:
+      - "Workshop Credential"
+    extra_vars:
+      sudo_remove_nopasswd: false
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
 
-    - name: "LINUX / DISA STIG"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/compliance.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      credentials:
-        - "Workshop Credential"
-      extra_vars:
-        sudo_remove_nopasswd: false
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
+  - name: "LINUX / Insights Compliance Scan"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/insights_compliance_scan.yml"
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Have you associated a compliance profile in the Insights Console for all hosts to be scanned?  If not, then the scan will fail.
+          type: multiplechoice
+          variable: compliance_profile_configured
+          required: true
+          choices:
+            - "Yes"
+            - "No"
+          default: "No"
 
-    - name: "LINUX / Insights Compliance Scan"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/insights_compliance_scan.yml"
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Have you associated a compliance profile in the Insights Console for all hosts to be scanned?  If not, then the scan will fail.
-            type: multiplechoice
-            variable: compliance_profile_configured
-            required: true
-            choices:
-              - "Yes"
-              - "No"
-            default: "No"
-
-    - name: "LINUX / Deploy Application"
-      job_type: run
-      inventory: "Workshop Inventory"
-      project: "Ansible official demo project"
-      playbook: "linux/deploy_application.yml"
-      notification_templates_started: Telemetry
-      notification_templates_success: Telemetry
-      notification_templates_error: Telemetry
-      use_fact_cache: true
-      credentials:
-        - "Workshop Credential"
-      survey_enabled: true
-      survey:
-        name: ''
-        description: ''
-        spec:
-          - question_name: Server Name or Pattern
-            type: text
-            variable: _hosts
-            required: true
-          - question_name: Application Package Name
-            type: text
-            variable: application
-            required: true
-    
-    rescue:
-      - fail:
-          msg: Maximum retries of grouped tasks reached
-        when: retry_count | int == 3
-      
-      - debug: "{{ demo }} job template configuration failed, retry count: {{ retry_count }}"
-      
-      - name: "Include configuration for {{ demo }}"
-        ansible.builtin.include_vars: "{{ demo }}/setup.yml"
-
-      - name: Demo Components
-        ansible.builtin.include_role:
-          name: "redhat_cop.controller_configuration.{{ item }}"
-        loop: "{{ controller_components }}"
-        when:
-          - controller_components | d("") | length > 0
+  - name: "LINUX / Deploy Application"
+    job_type: run
+    inventory: "Workshop Inventory"
+    project: "Ansible official demo project"
+    playbook: "linux/deploy_application.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    use_fact_cache: true
+    credentials:
+      - "Workshop Credential"
+    survey_enabled: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: Server Name or Pattern
+          type: text
+          variable: _hosts
+          required: true
+        - question_name: Application Package Name
+          type: text
+          variable: application
+          required: true
