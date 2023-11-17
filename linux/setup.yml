@@ -44,6 +44,12 @@ controller_inventory_sources:
     credential: Insights Inventory
 
 controller_templates:
+  - name: Retry rescue block
+    block:
+    - name: Increment retry count
+      set_fact:
+        retry_count: "{{ 0 if retry_count is undefined else retry_count | int + 1 }}"
+
   - name: "LINUX / Register with Insights"
     job_type: run
     inventory: "Workshop Inventory"
@@ -408,3 +414,20 @@ controller_templates:
           type: text
           variable: application
           required: true
+    
+    rescue:
+      - fail:
+          msg: Maximum retries of grouped tasks reached
+        when: retry_count | int == 3
+      
+      - debug: "{{ demo }} job template configuration failed, retry count: {{ retry_count }}"
+      
+      - name: "Include configuration for {{ demo }}"
+        ansible.builtin.include_vars: "{{ demo }}/setup.yml"
+
+      - name: Demo Components
+        ansible.builtin.include_role:
+          name: "redhat_cop.controller_configuration.{{ item }}"
+        loop: "{{ controller_components }}"
+        when:
+          - controller_components | d("") | length > 0
