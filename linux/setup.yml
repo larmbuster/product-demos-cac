@@ -43,9 +43,7 @@ controller_inventory_sources:
     source_path: linux/inventory.insights.yml
     credential: Insights Inventory
 
-- name: Configure Linux job templates
-  block:
-  controller_templates:
+controller_templates:
   - name: "LINUX / Register with Insights"
     job_type: run
     inventory: "Workshop Inventory"
@@ -409,10 +407,4 @@ controller_inventory_sources:
         - question_name: Application Package Name
           type: text
           variable: application
-          required: true  
-
-  rescue:
-    - fail:
-        msg: Maximum retries of grouped tasks reached
-      # initial try plus 3 retries = 4 total tries
-      when: retry_count | int == 3
+          required: true
