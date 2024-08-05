@@ -111,6 +111,7 @@ controller_templates:
     inventory: Network Inventory
     project: "Ansible official demo project"
     playbook: "network/compliance.yml"
+    execution_environment: Networking Execution Environment
     notification_templates_started: Telemetry
     notification_templates_success: Telemetry
     notification_templates_error: Telemetry
