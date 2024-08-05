@@ -375,13 +375,13 @@
     - iosxeSTIG_stigrule_215836_Manage
 # R-215837 CISC-ND-001000
 # Please configure name IP address to a valid one.
-#- name : stigrule_215837_host
-#  ignore_errors: "{{ ignore_all_errors }}"
-#  notify: "save configuration"
-#  ios_logging:
-#    dest: host
-#    name: "{{ iosxeSTIG_stigrule_215837_host_Name }}"
-#  when: iosxeSTIG_stigrule_215837_Manage
+- name : stigrule_215837_host
+  ignore_errors: "{{ ignore_all_errors }}"
+  notify: "save configuration"
+  ios_logging:
+    dest: host
+    name: "{{ iosxeSTIG_stigrule_215837_host_Name }}"
+  when: iosxeSTIG_stigrule_215837_Manage
 # R-215837 CISC-ND-001000
 # Please configure name IP address to a valid one.
 - name : stigrule_215837_logging_trap_critical
