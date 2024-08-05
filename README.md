@@ -2,7 +2,7 @@
 
 # Ansible Product Demos fork for DOD Automated Compliance Instruqt Lab
 
-This is a fork of ansible/product-demos with changes made to allow the "DOD Automated Compliance" lab to function correctly. 
+This is a fork of [ansible/product-demos](https://github.com/ansible/product-demos) with changes made to allow the "DOD Automated Compliance" lab to function correctly. 
 
 | Demo Name | Description |
 |-----------|-------------|
