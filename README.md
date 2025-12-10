@@ -1,3 +1,5 @@
+##This workshop has been deprecated
+
 [![Lab](https://img.shields.io/badge/Try%20Me-EE0000?style=for-the-badge&logo=redhat&logoColor=white)](https://play.instruqt.com/embed/redhat/tracks/dod-automated-compliance)
 
 # Ansible Product Demos fork for DOD Automated Compliance Instruqt Lab
